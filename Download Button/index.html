@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Button with Airplane Animation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Download Button -->
+    <button class="btn" id="downloadBtn">
+        <span id="buttonText">Download</span>
+        <div class="progress"></div>
+    </button>
+
+    <!-- Airplane Animation -->
+    <div class="airplane" id="airplane">✈️</div>
+
+    <script>
+        document.getElementById("downloadBtn").addEventListener("click", function() {
+            let btn = this;
+            let text = document.getElementById("buttonText");
+            let progress = btn.querySelector(".progress");
+            let airplane = document.getElementById("airplane");
+
+            text.textContent = "Downloading...";
+            progress.style.width = "100%"; // Simulate progress bar
+            
+            setTimeout(() => {
+                text.textContent = "Completed!";
+                btn.classList.add("done");
+                
+                setTimeout(() => {
+                    airplane.style.display = "block";
+                    airplane.classList.add("fly");
+                    
+                    setTimeout(() => {
+                        airplane.style.display = "none"; // Hide airplane after animation
+                    }, 3000);
+                }, 1000);
+            }, 3000);
+        });
+    </script>
+
+</body>
+</html>
