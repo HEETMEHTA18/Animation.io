@@ -1,8 +1,17 @@
-/* Level settings */
-.slider {
-    /* Slider */
-    --slider-width: 100%;
-    --slider-height: 50px;
+/* Apply black background to the entire page */
+body {
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  
+  /* Level settings */
+  .slider {
+    --slider-width: 10px;
+    --slider-height: 150px;
     --slider-bg: rgb(82, 82, 82);
     --slider-border-radius: 9px;
     
@@ -11,29 +20,24 @@
     --level-transition-duration: 0.1s;
     
     /* Icon */
-    --icon-margin: 15px;
-    --icon-color: var(--slider-bg);
-    --icon-size: 25px;
+    --icon-margin: 10px;
+    --icon-color: white;
+    --icon-size: 40px;
   }
   
   .slider {
     position: relative;
     cursor: pointer;
-    display: inline-flex;
-    flex-direction: row-reverse;
+    display: flex;
+    flex-direction: column;
     align-items: center;
   }
   
   .slider .volume {
-    display: inline-block;
-    vertical-align: top;
-    margin-right: var(--icon-margin);
-    color: var(--icon-color);
     width: var(--icon-size);
-    height: auto;
-    position: absolute;
-    left: 0;
-    pointer-events: none;
+    height: var(--icon-size);
+    margin-bottom: var(--icon-margin);
+    color: var(--icon-color);
   }
   
   .slider .level {
@@ -47,7 +51,7 @@
     border-radius: var(--slider-border-radius);
     transition: height var(--level-transition-duration);
     cursor: inherit;
-    transform: rotate(270deg);
+    writing-mode: bt-lr; /* Makes slider vertical */
   }
   
   .slider .level::-webkit-slider-thumb {
