@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Button</title>
+    <style>
+        /* CSS Code */
+        .container {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #282c34;
+        }
+
+        .label {
+            background-color: transparent;
+            border: 2px solid rgb(91, 91, 240);
+            display: flex;
+            align-items: center;
+            border-radius: 50px;
+            width: 160px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            padding: 5px;
+            position: relative;
+        }
+
+        .label .input {
+            display: none;
+        }
+
+        .label .title {
+            font-size: 17px;
+            color: #fff;
+            transition: all 0.4s ease;
+            position: absolute;
+            right: 18px;
+            bottom: 14px;
+            text-align: center;
+        }
+
+        .label .title:last-child {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .label .circle {
+            height: 45px;
+            width: 45px;
+            border-radius: 50%;
+            background-color: rgb(91, 91, 240);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .label .circle .icon {
+            color: #fff;
+            width: 30px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.4s ease;
+        }
+
+        .label:has(.input:checked) {
+            width: 57px;
+            animation: installed 0.4s ease 3.5s forwards;
+        }
+
+        .label .input:checked + .circle {
+            animation: pulse 1s forwards, circleDelete 0.2s ease 3.5s forwards;
+            rotate: 180deg;
+        }
+
+        .label .input:checked + .circle .icon {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .label .input:checked ~ .title {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .label .input:checked ~ .title:last-child {
+            animation: showInstalledMessage 0.4s ease 3.5s forwards;
+        }
+
+        @keyframes pulse {
+            0% {
+                scale: 0.95;
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+            }
+            70% {
+                scale: 1;
+                box-shadow: 0 0 0 16px rgba(255, 255, 255, 0);
+            }
+            100% {
+                scale: 0.95;
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+            }
+        }
+
+        @keyframes installed {
+            100% {
+                width: 150px;
+                border-color: rgb(35, 174, 35);
+            }
+        }
+
+        @keyframes showInstalledMessage {
+            100% {
+                opacity: 1;
+                visibility: visible;
+                right: 56px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <label class="label">
+            <input type="checkbox" class="input" />
+            <span class="circle">
+                <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 19V5m0 14-4-4m4 4 4-4"></path>
+                </svg>
+            </span>
+            <p class="title">Download</p>
+            <p class="title">Open</p>
+        </label>
+    </div>
+</body>
+</html>
