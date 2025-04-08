@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Traffic Light System - 4 Lanes</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+    }
+    
+    .container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 900px;
+      gap: 20px;
+    }
+    
+    .header {
+      background-color: #333;
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    .arduino-section {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .intersection-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: 1fr 1fr 1fr;
+      gap: 10px;
+      margin: 20px 0;
+    }
+    
+    .traffic-light {
+      background-color: #333;
+      width: 80px;
+      height: 240px;
+      border-radius: 10px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0 auto;
+    }
+    
+    .light {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: #555;
+      margin: 5px 0;
+    }
+    
+    .red { background-color: #555; }
+    .yellow { background-color: #555; }
+    .green { background-color: #555; }
+    
+    .active-red { background-color: #ff3b30; box-shadow: 0 0 20px #ff3b30; }
+    .active-yellow { background-color: #ffcc00; box-shadow: 0 0 20px #ffcc00; }
+    .active-green { background-color: #34c759; box-shadow: 0 0 20px #34c759; }
+    
+    .lane1 { grid-column: 2; grid-row: 1; }
+    .lane2 { grid-column: 3; grid-row: 2; }
+    .lane3 { grid-column: 2; grid-row: 3; }
+    .lane4 { grid-column: 1; grid-row: 2; }
+    
+    .intersection-center {
+      grid-column: 2;
+      grid-row: 2;
+      background-color: #777;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+    
+    .lane {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .lane-label {
+      font-weight: bold;
+    }
+    
+    .sensor {
+      width: 30px;
+      height: 15px;
+      background-color: #333;
+      border-radius: 3px;
+      position: relative;
+      cursor: pointer;
+    }
+    
+    .sensor.active {
+      background-color: #ff3b30;
+    }
+    
+    .sensor::after {
+      content: 'IR';
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      color: #333;
+    }
+    
+    .control-panel {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .code-editor {
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+      font-family: "Consolas", monospace;
+      padding: 15px;
+      border-radius: 5px;
+      white-space: pre;
+      overflow-x: auto;
+      line-height: 1.5;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    
+    button {
+      background-color: #0078d7;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    
+    button:hover {
+      background-color: #005a9e;
+    }
+    
+    .timer-display {
+      font-size: 24px;
+      margin: 15px 0;
+      font-weight: bold;
+    }
+    
+    .status-message {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 10px 0;
+      text-align: center;
+    }
+    
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    .metric {
+      text-align: center;
+      background-color: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .metric-value {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    
+    .lane-status {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+    }
+    
+    .lane-card {
+      background-color: white;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .lane-card.active {
+      border: 2px solid #34c759;
+    }
+    
+    .lane-number {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    
+    .lane-time {
+      font-size: 16px;
+      margin: 5px 0;
+    }
+    
+    .lane-density {
+      font-size: 14px;
+    }
+    
+    .density-label {
+      background-color: #e0e0e0;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+    }
+    
+    .density-high {
+      background-color: #ff3b30;
+      color: white;
+    }
+    
+    .density-medium {
+      background-color: #ffcc00;
+    }
+    
+    .density-low {
+      background-color: #34c759;
+      color: white;
+    }
+    
+    .density-none {
+      background-color: #e0e0e0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Smart Traffic Light System</h1>
+      <p>ESP32-based 4-lane traffic management with IR sensors</p>
+    </div>
+    
+    <div class="arduino-section">
+      <h2>ESP32 Code</h2>
+      <div class="code-editor">// Final Smart Traffic Light Control System for 4 Breadboards (1 per lane)
+// Each lane uses IR sensor and traffic lights, connected to ESP32
+// Only one lane has green at a time, with a delay between transitions
+// Priority given to lanes with lowest vehicle count
+// SAFETY: 5s delay between green transitions to avoid collisions
+
+#define IR1 32  // Lane 1 IR Sensor
+#define IR2 33  // Lane 2 IR Sensor
+#define IR3 34  // Lane 3 IR Sensor
+#define IR4 35  // Lane 4 IR Sensor
+
+// Lane 1 Traffic Lights
+#define RED1 25
+#define YELLOW1 26
+#define GREEN1 27
+
+// Lane 2 Traffic Lights
+#define RED2 14
+#define YELLOW2 12
+#define GREEN2 13
+
+// Lane 3 Traffic Lights
+#define RED3 4
+#define YELLOW3 2
+#define GREEN3 15
+  
+// Lane 4 Traffic Lights
+#define RED4 21
+#define YELLOW4 19
+#define GREEN4 18
+
+void setup() {
+  pinMode(IR1, INPUT);
+  pinMode(IR2, INPUT);
+  pinMode(IR3, INPUT);
+  pinMode(IR4, INPUT);
+
+  pinMode(RED1, OUTPUT); pinMode(YELLOW1, OUTPUT); pinMode(GREEN1, OUTPUT);
+  pinMode(RED2, OUTPUT); pinMode(YELLOW2, OUTPUT); pinMode(GREEN2, OUTPUT);
+  pinMode(RED3, OUTPUT); pinMode(YELLOW3, OUTPUT); pinMode(GREEN3, OUTPUT);
+  pinMode(RED4, OUTPUT); pinMode(YELLOW4, OUTPUT); pinMode(GREEN4, OUTPUT);
+
+  allRed(); // Set all lights to red at the start
+}
+
+void loop() {
+  int density[4];
+  density[0] = digitalRead(IR1) == LOW ? 3 : 0;
+  density[1] = digitalRead(IR2) == LOW ? 2 : 0;
+  density[2] = digitalRead(IR3) == LOW ? 1 : 0;
+  density[3] = digitalRead(IR4) == LOW ? 1 : 0;
+
+  for (int i = 0; i < 4; i++) {
+    int minIndex = getMinDensityIndex(density);
+    int greenTime = 0;
+
+    if (density[minIndex] == 0) greenTime = 4000;
+    else if (density[minIndex] == 1) greenTime = 7000;
+    else if (density[minIndex] == 2) greenTime = 10000;
+    else greenTime = 15000;
+
+    // Run selected lane with priority
+    switch (minIndex) {
+      case 0: runLane(RED1, YELLOW1, GREEN1, greenTime); break;
+      case 1: runLane(RED2, YELLOW2, GREEN2, greenTime); break;
+      case 2: runLane(RED3, YELLOW3, GREEN3, greenTime); break;
+      case 3: runLane(RED4, YELLOW4, GREEN4, greenTime); break;
+    }
+
+    density[minIndex] = 100; // Mark lane as processed
+    delay(5000); // SAFETY DELAY before switching to next lane
+  }
+}
+
+void runLane(int red, int yellow, int green, int greenTime) {
+  allRed();
+  delay(500); // brief delay before switching to green
+
+  digitalWrite(red, LOW);
+  digitalWrite(green, HIGH);
+  delay(greenTime);
+
+  digitalWrite(green, LOW);
+  digitalWrite(yellow, HIGH);
+  delay(2000);
+  digitalWrite(yellow, LOW);
+  digitalWrite(red, HIGH);
+}
+
+void allRed() {
+  digitalWrite(RED1, HIGH); digitalWrite(GREEN1, LOW); digitalWrite(YELLOW1, LOW);
+  digitalWrite(RED2, HIGH); digitalWrite(GREEN2, LOW); digitalWrite(YELLOW2, LOW);
+  digitalWrite(RED3, HIGH); digitalWrite(GREEN3, LOW); digitalWrite(YELLOW3, LOW);
+  digitalWrite(RED4, HIGH); digitalWrite(GREEN4, LOW); digitalWrite(YELLOW4, LOW);
+}
+
+int getMinDensityIndex(int lanes[]) {
+  int min = lanes[0];
+  int index = 0;
+  for (int i = 1; i < 4; i++) {
+    if (lanes[i] < min) {
+      min = lanes[i];
+      index = i;
+    }
+  }
+  return index;
+}</div>
+      <button id="run-button" onclick="runSimulation()">Run Simulation</button>
+    </div>
+    
+    <div class="control-panel">
+      <h2>System Status</h2>
+      <div class="status-message" id="status-message">System Ready</div>
+      <div class="timer-display" id="timer">Waiting...</div>
+      
+      <div class="lane-status">
+        <div class="lane-card" id="lane1-card">
+          <div class="lane-number">Lane 1</div>
+          <div class="lane-time" id="lane1-time">Wait: --</div>
+          <div class="lane-density">
+            <span class="density-label" id="lane1-density">No Vehicles</span>
+          </div>
+        </div>
+        <div class="lane-card" id="lane2-card">
+          <div class="lane-number">Lane 2</div>
+          <div class="lane-time" id="lane2-time">Wait: --</div>
+          <div class="lane-density">
+            <span class="density-label" id="lane2-density">No Vehicles</span>
+          </div>
+        </div>
+        <div class="lane-card" id="lane3-card">
+          <div class="lane-number">Lane 3</div>
+          <div class="lane-time" id="lane3-time">Wait: --</div>
+          <div class="lane-density">
+            <span class="density-label" id="lane3-density">No Vehicles</span>
+          </div>
+        </div>
+        <div class="lane-card" id="lane4-card">
+          <div class="lane-number">Lane 4</div>
+          <div class="lane-time" id="lane4-time">Wait: --</div>
+          <div class="lane-density">
+            <span class="density-label" id="lane4-density">No Vehicles</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="intersection-layout">
+      <div class="lane lane1">
+        <div class="lane-label">Lane 1</div>
+        <div class="traffic-light">
+          <div class="light red" id="light1-red"></div>
+          <div class="light yellow" id="light1-yellow"></div>
+          <div class="light green" id="light1-green"></div>
+        </div>
+        <div class="sensor" id="sensor1" onclick="toggleSensor(1)"></div>
+      </div>
+      
+      <div class="lane lane2">
+        <div class="lane-label">Lane 2</div>
+        <div class="traffic-light">
+          <div class="light red" id="light2-red"></div>
+          <div class="light yellow" id="light2-yellow"></div>
+          <div class="light green" id="light2-green"></div>
+        </div>
+        <div class="sensor" id="sensor2" onclick="toggleSensor(2)"></div>
+      </div>
+      
+      <div class="lane lane3">
+        <div class="lane-label">Lane 3</div>
+        <div class="traffic-light">
+          <div class="light red" id="light3-red"></div>
+          <div class="light yellow" id="light3-yellow"></div>
+          <div class="light green" id="light3-green"></div>
+        </div>
+        <div class="sensor" id="sensor3" onclick="toggleSensor(3)"></div>
+      </div>
+      
+      <div class="lane lane4">
+        <div class="lane-label">Lane 4</div>
+        <div class="traffic-light">
+          <div class="light red" id="light4-red"></div>
+          <div class="light yellow" id="light4-yellow"></div>
+          <div class="light green" id="light4-green"></div>
+        </div>
+        <div class="sensor" id="sensor4" onclick="toggleSensor(4)"></div>
+      </div>
+      
+      <div class="intersection-center">
+        Intersection
+      </div>
+    </div>
+    
+    <div class="metrics">
+      <div class="metric">
+        <div class="metric-value" id="total-vehicles">0</div>
+        <div class="metric-label">Total Vehicles</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value" id="avg-wait-time">0s</div>
+        <div class="metric-label">Average Wait Time</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value" id="cycles-completed">0</div>
+        <div class="metric-label">Cycles Completed</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value" id="system-uptime">0m</div>
+        <div class="metric-label">System Uptime</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Global variables
+    let isRunning = false;
+    let currentLane = 0;
+    let timerId;
+    let remainingTime = 0;
+    let greenTime = 0;
+    let cyclesCompleted = 0;
+    let startTime = 0;
+    let vehicleCount = 0;
+    let totalWaitTime = 0;
+    let laneQueue = [];
+    let sensorStates = [false, false, false, false];
+    let density = [0, 0, 0, 0];
+    
+    // Initialize all traffic lights to red
+    function resetLights() {
+      for (let i = 1; i <= 4; i++) {
+        document.getElementById(`light${i}-red`).classList.remove('active-red');
+        document.getElementById(`light${i}-yellow`).classList.remove('active-yellow');
+        document.getElementById(`light${i}-green`).classList.remove('active-green');
+      }
+    }
+    
+    function allRed() {
+      resetLights();
+      for (let i = 1; i <= 4; i++) {
+        document.getElementById(`light${i}-red`).classList.add('active-red');
+      }
+    }
+    
+    // Toggle IR sensor state (simulates vehicle detection)
+    function toggleSensor(sensorId) {
+      const index = sensorId - 1;
+      sensorStates[index] = !sensorStates[index];
+      
+      const sensor = document.getElementById(`sensor${sensorId}`);
+      if (sensorStates[index]) {
+        sensor.classList.add('active');
+        // Update density based on sensor
+        if (sensorId === 1) density[index] = 3;
+        else if (sensorId === 2) density[index] = 2;
+        else density[index] = 1;
+      } else {
+        sensor.classList.remove('active');
+        density[index] = 0;
+      }
+      
+      updateDensityLabels();
+    }
+    
+    // Update lane status cards with density information
+    function updateDensityLabels() {
+      const densityLabels = ['No Vehicles', 'Low', 'Medium', 'High'];
+      const densityClasses = ['density-none', 'density-low', 'density-medium', 'density-high'];
+      
+      for (let i = 0; i < 4; i++) {
+        const label = document.getElementById(`lane${i+1}-density`);
+        
+        // Remove all density classes
+        for (const cls of densityClasses) {
+          label.classList.remove(cls);
+        }
+        
+        // Add appropriate class and text
+        label.textContent = densityLabels[density[i]];
+        label.classList.add(densityClasses[density[i]]);
+      }
+    }
+    
+    function getMinDensityIndex(lanes) {
+      let min = lanes[0];
+      let index = 0;
+      for (let i = 1; i < 4; i++) {
+        if (lanes[i] < min) {
+          min = lanes[i];
+          index = i;
+        }
+      }
+      return index;
+    }
+    
+    function runSimulation() {
+      if (isRunning) {
+        // Stop simulation
+        clearInterval(timerId);
+        document.getElementById('run-button').textContent = 'Run Simulation';
+        document.getElementById('status-message').textContent = 'System Stopped';
+        isRunning = false;
+        allRed();
+      } else {
+        // Start simulation
+        document.getElementById('run-button').textContent = 'Stop Simulation';
+        document.getElementById('status-message').textContent = 'System Initializing...';
+        isRunning = true;
+        
+        // Initialize metrics
+        startTime = Date.now();
+        cyclesCompleted = 0;
+        vehicleCount = 0;
+        totalWaitTime = 0;
+        
+        // Start with all red
+        allRed();
+        
+        // Create a copy of the density array to work with
+        let densityCopy = [...density];
+        
+        // Create the lane queue
+        laneQueue = [];
+        for (let i = 0; i < 4; i++) {
+          const minIndex = getMinDensityIndex(densityCopy);
+          laneQueue.push(minIndex);
+          densityCopy[minIndex] = 100; // Mark as processed
+        }
+        
+        // Start processing the first lane
+        processNextLane();
+        
+        // Start the timer for updating metrics
+        setInterval(updateMetrics, 1000);
+      }
+    }
+    
+    function processNextLane() {
+      if (!isRunning || laneQueue.length === 0) return;
+      
+      const laneIndex = laneQueue.shift();
+      currentLane = laneIndex + 1; // 1-based for display
+      
+      // Update UI to show current lane
+      for (let i = 1; i <= 4; i++) {
+        document.getElementById(`lane${i}-card`).classList.remove('active');
+      }
+      document.getElementById(`lane${currentLane}-card`).classList.add('active');
+      
+      // Calculate green time based on density
+      if (density[laneIndex] === 0) greenTime = 4000;
+      else if (density[laneIndex] === 1) greenTime = 7000;
+      else if (density[laneIndex] === 2) greenTime = 10000;
+      else greenTime = 15000;
+      
+      // Convert to seconds for display
+      const greenTimeSeconds = greenTime / 1000;
+      
+      // Update wait times for other lanes
+      for (let i = 0; i < 4; i++) {
+        if (i !== laneIndex) {
+          const waitTime = greenTimeSeconds + 2 + 5; // Green + Yellow + Safety delay
+          document.getElementById(`lane${i+1}-time`).textContent = `Wait: ${waitTime}s`;
+          totalWaitTime += waitTime;
+        } else {
+          document.getElementById(`lane${i+1}-time`).textContent = `Green: ${greenTimeSeconds}s`;
+        }
+      }
+      
+      // Run the lane green cycle
+      runLane(laneIndex);
+    }
+    
+    function runLane(laneIndex) {
+      // All red first
+      allRed();
+      document.getElementById('status-message').textContent = `Lane ${laneIndex + 1} preparing for green`;
+      
+      // Short delay before green
+      setTimeout(() => {
+        // Turn on green for the selected lane
+        document.getElementById(`light${laneIndex+1}-red`).classList.remove('active-red');
+        document.getElementById(`light${laneIndex+1}-green`).classList.add('active-green');
+        
+        document.getElementById('status-message').textContent = `Lane ${laneIndex + 1} is GREEN`;
+        
+        // Start countdown
+        remainingTime = greenTime;
+        updateTimer();
+        timerId = setInterval(updateTimer, 100);
+        
+        // Schedule yellow after green time
+        setTimeout(() => {
+          clearInterval(timerId);
+          
+          // Turn on yellow
+          document.getElementById(`light${laneIndex+1}-green`).classList.remove('active-green');
+          document.getElementById(`light${laneIndex+1}-yellow`).classList.add('active-yellow');
+          
+          document.getElementById('status-message').textContent = `Lane ${laneIndex + 1} is YELLOW`;
+          document.getElementById('timer').textContent = `2s remaining`;
+          
+          // Count vehicles that passed
+          if (density[laneIndex] > 0) {
+            vehicleCount += density[laneIndex] + 1;
+            document.getElementById('total-vehicles').textContent = vehicleCount;
+          }
+          
+          // Schedule red after yellow time
+          setTimeout(() => {
+            // Turn on red for all
+            allRed();
+            document.getElementById('status-message').textContent = 'SAFETY DELAY - All Red';
+            document.getElementById('timer').textContent = `5s safety delay`;
+            
+            // Safety delay before next lane
+            setTimeout(() => {
+              // If there are no more lanes in the queue, create a new queue
+              if (laneQueue.length === 0) {
+                cyclesCompleted++;
+                document.getElementById('cycles-completed').textContent = cyclesCompleted;
+                
+                // Create a copy of the density array to work with
+                let densityCopy = [...density];
+                
+                // Create the lane queue
+                for (let i = 0; i < 4; i++) {
+                  const minIndex = getMinDensityIndex(densityCopy);
+                  laneQueue.push(minIndex);
+                  densityCopy[minIndex] = 100; // Mark as processed
+                }
+              }
+              
+              // Process the next lane
+              processNextLane();
+            }, 5000);
+          }, 2000);
+        }, greenTime);
+      }, 500);
+    }
+    
+    function updateTimer() {
+      remainingTime -= 100;
+      if (remainingTime <= 0) {
+        clearInterval(timerId);
+        return;
+      }
+      
+      const seconds = Math.ceil(remainingTime / 1000);
+      document.getElementById('timer').textContent = `${seconds}s remaining`;
+    }
+    
+    function updateMetrics() {
+      if (!isRunning) return;
+      
+      // Update system uptime
+      const uptime = Math.floor((Date.now() - startTime) / 60000);
+      document.getElementById('system-uptime').textContent = `${uptime}m`;
+      
+      // Update average wait time if there are vehicles
+      if (vehicleCount > 0) {
+        const avgWait = Math.round(totalWaitTime / vehicleCount);
+        document.getElementById('avg-wait-time').textContent = `${avgWait}s`;
+      }
+    }
+    
+    // Initialize system
+    allRed();
+    updateDensityLabels();
+  </script>
+</body>
+</html>
