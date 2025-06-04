@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Animated Loader Card</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+    }
+
+    .card {
+      --bg-color: #111;
+      background-color: var(--bg-color);
+      padding: 1rem 2rem;
+      border-radius: 1.25rem;
+    }
+
+    .loader {
+      color: rgb(124, 124, 124);
+      font-family: "Poppins", sans-serif;
+      font-weight: 500;
+      font-size: 25px;
+      box-sizing: content-box;
+      height: 40px;
+      padding: 10px 10px;
+      display: flex;
+      align-items: center;
+      border-radius: 8px;
+    }
+
+    .words {
+      overflow: hidden;
+      position: relative;
+      height: 30px;
+      margin-left: 10px;
+    }
+
+    .words::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        var(--bg-color) 10%,
+        transparent 30%,
+        transparent 70%,
+        var(--bg-color) 90%
+      );
+      z-index: 20;
+    }
+
+    .word {
+      display: block;
+      height: 100%;
+      color: #956afa;
+      animation: spin_4991 4s infinite;
+    }
+
+    @keyframes spin_4991 {
+      10% { transform: translateY(-102%); }
+      25% { transform: translateY(-100%); }
+      35% { transform: translateY(-202%); }
+      50% { transform: translateY(-200%); }
+      60% { transform: translateY(-302%); }
+      75% { transform: translateY(-300%); }
+      85% { transform: translateY(-402%); }
+      100% { transform: translateY(-400%); }
+    }
+
+    .words .word {
+      animation: spin_4991 4s infinite;
+    }
+
+    .words {
+      display: inline-block;
+    }
+
+    .words span {
+      display: block;
+    }
+
+    .words span.word {
+      line-height: 30px;
+    }
+
+    .words {
+      height: 30px;
+    }
+
+    .words span.word:nth-child(1) { animation-delay: 0s; }
+    .words span.word:nth-child(2) { animation-delay: 0s; }
+    .words span.word:nth-child(3) { animation-delay: 0s; }
+    .words span.word:nth-child(4) { animation-delay: 0s; }
+    .words span.word:nth-child(5) { animation-delay: 0s; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="loader">
+      <p>loading</p>
+      <div class="words">
+        <span class="word">buttons</span>
+        <span class="word">forms</span>
+        <span class="word">switches</span>
+        <span class="word">cards</span>
+        <span class="word">buttons</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
