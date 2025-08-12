@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Walking Cow Loader</title>
+<style>
+:root {
+  --cowWhite: #fff;
+  --cowBlack: #333;
+  --cowPink: #ffb6c1;
+  --bgLight: #c0e7ff;
+  --bgDark: #0e1a2b;
+  --groundLight: #7cc576;
+  --groundDark: #2b3a23;
+}
+
+body {
+  background-color: var(--bgLight);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100vh;
+  overflow: hidden;
+  transition: background 0.5s;
+}
+
+.toggle-btn {
+  position: absolute;
+  top: 1em;
+  right: 1em;
+  padding: 0.5em 1em;
+  cursor: pointer;
+  background: var(--cowBlack);
+  color: white;
+  border: none;
+  border-radius: 0.5em;
+  font-size: 1em;
+  transition: background 0.3s;
+}
+.toggle-btn:hover {
+  background: #555;
+}
+
+.cowloader {
+  width: 14em;
+  height: 10em;
+  position: relative;
+  transform: scale(0.8) scaleX(-1); /* <-- Flips cow to face right */
+  animation: walkAcross 8s linear infinite;
+}   
+
+
+.cow {
+  width: 100%;
+  height: 7em;
+  position: relative;
+}
+
+.cow-body {
+  width: 9em;
+  height: 5em;
+  background: var(--cowWhite);
+  border-radius: 2em;
+  position: absolute;
+  bottom: 1em;
+  left: 3em;
+  animation: movebody 1s linear infinite;
+}
+
+.cow-spot {
+  position: absolute;
+  background: var(--cowBlack);
+  border-radius: 50%;
+}
+.spot1 {
+  width: 2em;
+  height: 2em;
+  top: 1em;
+  left: 2em;
+}
+.spot2 {
+  width: 1.5em;
+  height: 1.5em;
+  top: 0.5em;
+  right: 1.5em;
+}
+
+.cow-head {
+  width: 4em;
+  height: 4em;
+  background: var(--cowWhite);
+  border-radius: 2em;
+  position: absolute;
+  left: -1em;
+  bottom: 2.5em;
+  animation: movebody 1s linear infinite;
+}
+
+.cow-ear {
+  width: 1em;
+  height: 1.5em;
+  background: var(--cowWhite);
+  border-radius: 0.5em;
+  position: absolute;
+  top: -0.5em;
+}
+.ear-left {
+  left: 0.2em;
+}
+.ear-right {
+  right: 0.2em;
+}
+
+.cow-eye {
+  width: 0.6em;
+  height: 0.6em;
+  background: var(--cowBlack);
+  border-radius: 50%;
+  position: absolute;
+  top: 1.2em;
+}
+.eye-left {
+  left: 0.8em;
+}
+.eye-right {
+  right: 0.8em;
+}
+
+.cow-muzzle {
+  width: 2.5em;
+  height: 1.5em;
+  background: var(--cowPink);
+  border-radius: 1em;
+  position: absolute;
+  bottom: 0.2em;
+  left: 0.8em;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.nostril {
+  width: 0.3em;
+  height: 0.3em;
+  background: var(--cowBlack);
+  border-radius: 50%;
+}
+
+.cow-leg {
+  width: 0.8em;
+  height: 2em;
+  background: var(--cowWhite);
+  position: absolute;
+  bottom: 0;
+  border-radius: 0.3em;
+  box-shadow: inset 0 -0.4em var(--cowBlack);
+}
+.leg-front {
+  left: 4em;
+  animation: moveleg 1s linear infinite;
+}
+.leg-back {
+  left: 7em;
+  animation: moveleg2 1s linear infinite 0.1s;
+}
+.leg-front2 {
+  left: 5.2em;
+  animation: moveleg2 1s linear infinite 0.1s;
+}
+.leg-back2 {
+  left: 8.2em;
+  animation: moveleg 1s linear infinite;
+}
+
+.cow-tail {
+  width: 0.5em;
+  height: 2em;
+  background: var(--cowWhite);
+  position: absolute;
+  right: 1em;
+  bottom: 3em;
+  border-radius: 0.25em;
+  transform-origin: top center;
+  animation: wag 0.5s ease-in-out infinite alternate;
+}
+
+.ground {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 2em;
+  background: var(--groundLight);
+  transition: background 0.5s;
+}
+
+@keyframes movebody {
+  0%,100% { transform: translateX(0%); }
+  50% { transform: translateX(2%); }
+}
+@keyframes moveleg {
+  0% { transform: rotate(-20deg); }
+  50% { transform: rotate(20deg); }
+  100% { transform: rotate(-20deg); }
+}
+@keyframes moveleg2 {
+  0% { transform: rotate(20deg); }
+  50% { transform: rotate(-20deg); }
+  100% { transform: rotate(20deg); }
+}
+@keyframes wag {
+  from { transform: rotate(10deg); }
+  to { transform: rotate(-10deg); }
+}
+@keyframes walkAcross {
+  0% { transform: translateX(-20%) scale(0.8); }
+  100% { transform: translateX(120%) scale(0.8); }
+}
+
+/* Dark mode */
+.dark {
+  background-color: var(--bgDark);
+}
+.dark .ground {
+  background: var(--groundDark);
+}
+</style>
+</head>
+<body>
+
+<button class="toggle-btn" onclick="toggleMode()">🌙 Dark Mode</button>
+
+<div class="cowloader">
+  <div class="cow">
+    <div class="cow-head">
+      <div class="cow-ear ear-left"></div>
+      <div class="cow-ear ear-right"></div>
+      <div class="cow-eye eye-left"></div>
+      <div class="cow-eye eye-right"></div>
+      <div class="cow-muzzle">
+        <div class="nostril"></div>
+        <div class="nostril"></div>
+      </div>
+    </div>
+    <div class="cow-body">
+      <div class="cow-spot spot1"></div>
+      <div class="cow-spot spot2"></div>
+    </div>
+    <div class="cow-leg leg-front"></div>
+    <div class="cow-leg leg-back"></div>
+    <div class="cow-leg leg-front2"></div>
+    <div class="cow-leg leg-back2"></div>
+    <div class="cow-tail"></div>
+  </div>
+</div>
+
+<div class="ground"></div>
+
+<script>
+let isDark = false;
+function toggleMode() {
+  document.body.classList.toggle("dark");
+  const btn = document.querySelector(".toggle-btn");
+  if (!isDark) {
+    btn.textContent = "☀️ Light Mode";
+    isDark = true;
+  } else {
+    btn.textContent = "🌙 Dark Mode";
+    isDark = false;
+  }
+}
+</script>
+
+</body>
+</html>
